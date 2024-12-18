@@ -1,4 +1,4 @@
-
+/* Overall container settings */
 .login-container {
     display: flex;
     justify-content: center;
@@ -16,7 +16,7 @@
     background-attachment: fixed; /* Keeps the image fixed when scrolling */
 }
 
-/* ログインボックスのデザイン */
+/* Login box design */
 .login-box {
     background-color: rgba(255, 255, 255, 0.9); /* Add transparency for a modern look */
     padding: 30px;
@@ -28,7 +28,7 @@
     backdrop-filter: blur(5px); /* Optional: adds a blur effect */
 }
 
-/* タイトル */
+/* Login title */
 .login-box h1 {
     margin-bottom: 20px;
     font-size: 24px;
@@ -39,7 +39,7 @@
     padding-bottom: 5px;
 }
 
-/* 入力フィールドのスタイル */
+/* Input fields */
 .login-input {
     width: 100%;
     padding: 10px;
@@ -50,7 +50,7 @@
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* ログインボタンのスタイル */
+/* Login button */
 .login-button {
     width: 100%;
     padding: 10px;
@@ -69,14 +69,14 @@
     transform: scale(1.02); /* Slight scale effect on hover */
 }
 
-/* エラーメッセージのスタイル */
+/* Error message styling */
 .error-message {
     color: #ff0000;
     margin-top: 10px;
     font-size: 14px;
 }
 
-/* Footer or tagline for healthcare-themed design */
+/* Footer styling */
 .login-footer {
     margin-top: 20px;
     font-size: 12px;
@@ -91,4 +91,36 @@
 
 .login-footer a:hover {
     text-decoration: underline;
+}
+
+/* Tab container */
+.tabs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+}
+
+/* Tab button styles */
+.tab-button {
+    flex: 1;
+    padding: 10px 0;
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    color: #007bff;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: border-bottom 0.3s, color 0.3s;
+}
+
+.tab-button:hover {
+    color: #0056b3;
+}
+
+.tab-button.active {
+    font-weight: bold;
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
 }

@@ -4,17 +4,24 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 const Login = () => {
+  const [activeTab, setActiveTab] = useState("hospital"); // Manage active tab state
   const [hospitalID, setHospitalID] = useState("");
+  const [doctorID, setDoctorID] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
   const navigate = useNavigate();
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setError(""); // Clear error when switching tabs
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (!hospitalID || !password) {
-      setError("Please enter both Hospital ID and Password.");
+    if (!password) {
+      setError("Please enter a password.");
       return;
     }
 
@@ -24,36 +31,40 @@ const Login = () => {
     }
 
     try {
-      // Prompt MetaMask to connect
+      // Connect to MetaMask
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       await provider.send("eth_requestAccounts", []);
       const signer = provider.getSigner();
       const address = await signer.getAddress();
-
-      // Display connected wallet address
       setWalletAddress(address);
 
-      // Example: Generate a signature for login
-      const message = `Login request for Hospital ID: ${hospitalID}`;
+      // Generate a message for signing
+      let id = "";
+      if (activeTab === "hospital") id = hospitalID;
+      if (activeTab === "doctor") id = doctorID;
+
+      const message = `Login request for ${activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} ID: ${id}`;
       const signature = await signer.signMessage(message);
 
       console.log("Signature:", signature);
 
-      // Verify login credentials (can be extended with backend validation)
-      const validHospitalID = "hospital123";
+      // Example validation
+      const validID = "123";
       const validPassword = "password123";
+      const validWalletAddress = "0x5a3108b2496447CB97aaDD0707150c988C35684d";
 
-      if (hospitalID === validHospitalID && password === validPassword) {
-        // Perform wallet verification (example logic)
-        const validWalletAddress = "0xf1dc2201651283704302FeeC20Ec74EAAE47D80E";
-        if (address.toLowerCase() === validWalletAddress.toLowerCase()) {
+      console.log("Connected Wallet Address:", address);
+      console.log("Expected Wallet Address:", validWalletAddress);
+
+      if (id === validID && password === validPassword) {
+        if (ethers.utils.getAddress(address) === ethers.utils.getAddress(validWalletAddress)) {
           setError("");
-          navigate("/healthcare"); // Redirect on success
+          navigate("/healthcare"); // Navigate to the healthcare dashboard
         } else {
           setError("Unauthorized wallet address.");
         }
       } else {
-        setError("Invalid Hospital ID or Password.");
+        setError("Invalid ID or Password.");
       }
     } catch (err) {
       console.error("MetaMask Login Error:", err);
@@ -64,16 +75,49 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h1>Hospital Login</h1>
+        <div className="tabs">
+          <button
+            className={`tab-button ${activeTab === "hospital" ? "active" : ""}`}
+            onClick={() => handleTabChange("hospital")}
+          >
+            Hospital
+          </button>
+          <button
+            className={`tab-button ${activeTab === "doctor" ? "active" : ""}`}
+            onClick={() => handleTabChange("doctor")}
+          >
+            Doctor
+          </button>
+        </div>
+
         <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Hospital ID"
-            value={hospitalID}
-            onChange={(e) => setHospitalID(e.target.value)}
-            className="login-input"
-            required
-          />
+          {activeTab === "hospital" && (
+            <>
+              <h1>Hospital Login</h1>
+              <input
+                type="text"
+                placeholder="Hospital ID"
+                value={hospitalID}
+                onChange={(e) => setHospitalID(e.target.value)}
+                className="login-input"
+                required
+              />
+            </>
+          )}
+          {activeTab === "doctor" && (
+            <>
+              <h1>Doctor Login</h1>
+              <input
+                type="text"
+                placeholder="Doctor ID"
+                value={doctorID}
+                onChange={(e) => setDoctorID(e.target.value)}
+                className="login-input"
+                required
+              />
+            </>
+          )}
+
           <input
             type="password"
             placeholder="Password"
@@ -86,6 +130,7 @@ const Login = () => {
             Login
           </button>
         </form>
+
         {walletAddress && <p>Connected Wallet: {walletAddress}</p>}
         {error && <p className="error-message">{error}</p>}
       </div>
